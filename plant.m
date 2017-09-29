@@ -4,6 +4,7 @@ classdef plant < handle
         efficiency      
         loan     
         onm
+        age
     end
     
     properties
