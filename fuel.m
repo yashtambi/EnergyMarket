@@ -23,7 +23,7 @@ classdef fuel < handle
            obj.gas_price = gas;
            obj.uranium_price = uranium;
            obj.wind_availability = wind/100;
-           fprintf('\n\t>>Prices updated\n');
+           fprintf('\tPrices updated\n');
         end
     end
 end

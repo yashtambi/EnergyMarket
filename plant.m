@@ -1,6 +1,7 @@
 classdef plant < handle
     properties (GetAccess=public)
         capacity
+        av_capacity
         efficiency      
         loan     
         onm

@@ -1,6 +1,6 @@
 classdef team < handle
     properties(Constant, Access=private)
-       plant_types = ["coal", "ccgt", "ocgt", "nuclear", "wind"]; 
+       plant_types = ["powderCoal", "naturalgasCCGT", "naturalgasOCGT", "nuclear", "wind"]; 
     end
     
     properties
@@ -17,45 +17,54 @@ classdef team < handle
         end
         
         function add_plant(obj, name, type, capacity, efficiency, loan, onm, availability)
-            %Todo: validate if exact same plant already exists
             
             %Validate PowerPlant type
-            flag = false;
-            for i = 1:length(obj.plant_types)
-               if((strcmp(type, obj.plant_types(i)) == 1))
-                   flag = true;
-                   break
-               end
-            end
-            
-            if flag == false
+            isValid = any(strcmp(type, obj.plant_types)==1);
+            if isValid == false
                 error('Illegal plant type');
             end
             
+            %Check valid efficiency input
             if efficiency>100
                 error('Plant efficiency cannot be > 100');
             end
             
+            %Check for input type
             if ~isa(availability, 'logical')
                 error('Plant Availability: please enter true or false');
             end
             
+            %To initialize the 'plants' variable as type 'plant'
             if(isempty(obj.plants))
                 obj.plants = plant;        
             end
             
-            obj.num_plants = obj.num_plants + 1;
-                   
-            obj.plants(obj.num_plants).plant_name = name;
-            obj.plants(obj.num_plants).plant_type = type;
-            obj.plants(obj.num_plants).capacity = capacity;
-            obj.plants(obj.num_plants).efficiency = efficiency/100;
-            obj.plants(obj.num_plants).loan = loan*10e6;
-            obj.plants(obj.num_plants).onm = onm*10e6;  
-            obj.plants(obj.num_plants).availability = availability;  
-            obj.total_capacity = obj.total_capacity + capacity;
+            %Check if plant already exists
+            index = 0;
+            for i = 1:length(obj.plants)
+                if isstring(obj.plants(i).plant_name) &&  obj.plants(i).plant_name==name
+                    index = i;
+                    break;
+                end
+            end
             
-            fprintf('\tNew powerplant \"%s\" added to team\n',obj.plants(obj.num_plants).plant_name);
+            % Contents in this if are updated only the first time
+            if(index == 0) 
+                obj.num_plants = obj.num_plants + 1;
+                index = obj.num_plants;
+                obj.total_capacity = obj.total_capacity + capacity;
+                obj.plants(index).efficiency = efficiency/100;
+                obj.plants(index).plant_name = name;
+                obj.plants(index).plant_type = type;
+                obj.plants(index).capacity = capacity;
+            end
+
+            % Contents here are updated everytime
+            obj.plants(index).loan = loan*10e6;
+            obj.plants(index).onm = onm*10e6;  
+            obj.plants(index).availability = availability;  
+            
+            fprintf('\tPowerplant \"%s\" added to team or updated\n',obj.plants(obj.num_plants).plant_name);
         end
         
         function dismantle_plant(obj, name)
@@ -73,32 +82,40 @@ classdef team < handle
         end
         
         function get_costs(obj,fuel,toprint)
-            obj.total_fixed_costs = 0;
             flag = true;
             if ~exist('toprint','var')
                 flag = true;
             else
                 flag = toprint;
             end
-            
+            if flag == true
+                fprintf("Plant Name\tPlant Type\tCapacity\tMargCost/MWh\n");
+            end
+            obj.total_fixed_costs = 0;
             for i = 1:length(obj.plants)
                 obj.total_fixed_costs = obj.total_fixed_costs + obj.plants(i).onm + obj.plants(i).loan;
                 if obj.plants(i).availability == 0
-                    fprintf('%s plant not available this round\n',obj.plants(i).plant_name);
+                    if flag == true
+                        fprintf('%10s\t%10s\t%8s\t%12s\t\n',obj.plants(i).plant_name,obj.plants(i).plant_type,"NA","NA");
+                    end
                     continue;
                 end
                 switch (obj.plants(i).plant_type)
-                    case "coal"
+                    case "powderCoal"
                         obj.plants(i).marginal_cost = (fuel.coal_price/fuel.coal_cal_value)/obj.plants(i).efficiency;
-                    case {"ccgt", "ocgt"}
+                        obj.plants(i).av_capacity = obj.plants(i).capacity;
+                    case {"naturalgasCCGT", "naturalgasOCGT"}
                         obj.plants(i).marginal_cost = (fuel.gas_price/fuel.gas_cal_value)/obj.plants(i).efficiency;
+                        obj.plants(i).av_capacity = obj.plants(i).capacity;
                     case "nuclear"
                         obj.plants(i).marginal_cost = (fuel.uranium_price/fuel.uranium_cal_value)/obj.plants(i).efficiency;
+                        obj.plants(i).av_capacity = obj.plants(i).capacity;
                     case "wind"
                         obj.plants(i).marginal_cost = 0;
+                        obj.plants(i).av_capacity = obj.plants(i).capacity*fuel.wind_availability;
                 end
                 if flag == true
-                    fprintf('%s plant (type %s) marginal cost: %2.4f per MWh\n',obj.plants(i).plant_name, obj.plants(i).plant_type, obj.plants(i).marginal_cost);
+                    fprintf('%10s\t%10s\t%8d\t%12.3d\t\n',obj.plants(i).plant_name, obj.plants(i).plant_type, obj.plants(i).av_capacity, obj.plants(i).marginal_cost);
                 end
             end
         end
@@ -115,8 +132,6 @@ classdef team < handle
                    av = av + (obj.plants(i).availability*obj.plants(i).capacity);
                end
             end
-            obj.total_capacity = tot;
-            obj.available_capacity = av;
         end
         
         function update_plant(obj, name, feild, value)
@@ -138,6 +153,9 @@ classdef team < handle
                            return;
                        case "onm"
                            obj.plants(i).onm = value;
+                           return;
+                       case "efficiency"
+                           obj.plants(i).efficiency = value/100;
                            return;
                        otherwise
                            error('Illegal Input');
