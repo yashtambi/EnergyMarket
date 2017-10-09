@@ -5,11 +5,11 @@ classdef fuel < handle
     end
     properties(Constant)
         coal_cal_value = 25000/3600;         % MJ / unit Fuel
-        coal_co2_value = 2.66;                      % ton CO2 / unit Fuel
+        coal_co2_value = 2.66;               % ton CO2 / unit Fuel
         gas_cal_value = 35.069/3600;         % MJ / unit Fuel
-        gas_co2_value = 0.00187;                    % ton CO2 / unit Fuel
+        gas_co2_value = 0.00187;             % ton CO2 / unit Fuel
         uranium_cal_value = 3888000.0/3600;  % MJ / unit Fuel
-        uranium_co2_value = 0;                      % ton CO2 / unit Fuel
+        uranium_co2_value = 0;               % ton CO2 / unit Fuel
     end
     properties
         coal_price;         % in Euro/ton

@@ -82,6 +82,8 @@ classdef team < handle
         end
         
         function get_costs(obj,fuel,toprint)
+            
+            % Add two more feilds: co2 emissions and units of fuel consumed
             flag = true;
             if ~exist('toprint','var')
                 flag = true;
@@ -89,19 +91,21 @@ classdef team < handle
                 flag = toprint;
             end
             if flag == true
-                fprintf("Plant Name\tPlant Type\tCapacity\tMargCost/MWh\n");
+                fprintf("Plant Name\tPlant Type\tCapacity\tFuel Units\tCO2 Units\tMargCost/MWh\n");
             end
             obj.total_fixed_costs = 0;
             for i = 1:length(obj.plants)
                 obj.total_fixed_costs = obj.total_fixed_costs + obj.plants(i).onm + obj.plants(i).loan;
                 if obj.plants(i).availability == 0
                     if flag == true
-                        fprintf('%10s\t%10s\t%8s\t%12s\t\n',obj.plants(i).plant_name,obj.plants(i).plant_type,"NA","NA");
+                        fprintf('%10s\t%10s\t%8s\t%10s\t%10s\t%12s\t\n',obj.plants(i).plant_name,obj.plants(i).plant_type,"NA","NA");
                     end
                     continue;
                 end
                 switch (obj.plants(i).plant_type)
                     case "powderCoal"
+                        obj.plants(i).fuel_units = (fuel.coal_cal_value/obj.plants(i).efficiency); % Fuel units consumed per kWh
+                        obj.plants(i).co2_units = obj.plants(i).fuel_units * fuel.coal_co2_value; 
                         obj.plants(i).marginal_cost = (fuel.coal_price/fuel.coal_cal_value)/obj.plants(i).efficiency;
                         obj.plants(i).av_capacity = obj.plants(i).capacity;
                     case {"naturalgasCCGT", "naturalgasOCGT"}
@@ -163,6 +167,13 @@ classdef team < handle
                end
            end
            error('Plant not found!');    
+        end
+        
+        function reset_team(obj)
+            obj.plants = [];
+            obj.num_plants = [];
+            obj.total_capacity = [];
+            obj.total_fixed_costs = [];
         end
     end
 end

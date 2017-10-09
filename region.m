@@ -42,7 +42,7 @@ classdef region < handle
            all_teams = unique(csv.Team);
            
            for i = 1:length(all_teams)
-               obj.add_team(evalin('caller',string(all_teams(i))),string(all_teams(i)));
+               obj.add_team(evalin('base',string(all_teams(i))),string(all_teams(i)));
            end
            
        end
