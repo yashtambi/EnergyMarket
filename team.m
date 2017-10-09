@@ -91,14 +91,15 @@ classdef team < handle
                 flag = toprint;
             end
             if flag == true
-                fprintf("Plant Name\tPlant Type\tCapacity\tFuel Units\tCO2 Units\tMargCost/MWh\n");
+                clc;
+                fprintf("Plant Name\tPlant Type\tCapacity\tMargCost/MWh\n");
             end
             obj.total_fixed_costs = 0;
             for i = 1:length(obj.plants)
                 obj.total_fixed_costs = obj.total_fixed_costs + obj.plants(i).onm + obj.plants(i).loan;
                 if obj.plants(i).availability == 0
                     if flag == true
-                        fprintf('%10s\t%10s\t%8s\t%10s\t%10s\t%12s\t\n',obj.plants(i).plant_name,obj.plants(i).plant_type,"NA","NA");
+                        fprintf('%10s\t%10s\t%8s\t%12s\n',obj.plants(i).plant_name,obj.plants(i).plant_type,"NA","NA");
                     end
                     continue;
                 end
