@@ -16,13 +16,15 @@ classdef fuel < handle
         gas_price;          % in Euro/m3
         uranium_price;      % in Euro/kg
         wind_availability;  % in %
+        co2_price;          % in Euro/ton
     end
     methods
-        function fuel_update(obj,coal,gas,uranium,wind)
+        function fuel_update(obj,coal,gas,uranium,wind,co2)
            obj.coal_price = coal;
            obj.gas_price = gas;
            obj.uranium_price = uranium;
            obj.wind_availability = wind/100;
+           obj.co2_price = co2;
            fprintf('\tPrices updated\n');
         end
     end

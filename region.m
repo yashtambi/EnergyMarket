@@ -96,7 +96,7 @@ classdef region < handle
            end
            
            % Plot all the bids (considering marginal costs)
-           plot(bids(:,2),bids(:,1),'-b*');
+           stairs(bids(:,2),bids(:,1),'-b*');
            xlabel('Capacity (MW)');
            ylabel('Price (Eu/MW)');
            grid MINOR;
@@ -107,7 +107,7 @@ classdef region < handle
 
        function predict_demand (obj,fuels,prev_demand, growth)
            new_demand = prev_demand*((100+growth)/100);
-           x = linspace(new_demand*0.95,new_demand);
+           x = linspace(new_demand*0.90,new_demand);
            y = (x - new_demand)/obj.demand_elasticity;
            obj.bid_plot(fuels);
            plot(x,y,'-.r');
