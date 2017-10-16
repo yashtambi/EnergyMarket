@@ -16,7 +16,7 @@ classdef team < handle
             obj.name = name;
         end
         
-        function add_plant(obj, name, type, capacity, efficiency, loan, onm, availability)
+        function add_plant(obj, name, type, capacity, efficiency, loan, onm, availability, year_active)
             
             %Validate PowerPlant type
             isValid = any(strcmp(type, obj.plant_types)==1);
@@ -57,6 +57,7 @@ classdef team < handle
                 obj.plants(index).plant_name = name;
                 obj.plants(index).plant_type = type;
                 obj.plants(index).capacity = capacity;
+                obj.plants(index).year_active = year_active;
             end
             
             % Contents here are updated everytime
@@ -98,6 +99,8 @@ classdef team < handle
             for i = 1:length(obj.plants)
                 obj.total_fixed_costs = obj.total_fixed_costs + obj.plants(i).onm + obj.plants(i).loan;
                 if obj.plants(i).availability == 0
+                    obj.plants(i).av_capacity = 0;
+                    obj.plants(i).marginal_cost = 0;
                     if flag == true
                         fprintf('%10s\t%10s\t%8s\t%12s\t%10s\t%10s\t%10s\n',...
                             obj.plants(i).plant_name,obj.plants(i).plant_type,"NA","NA","NA","NA","NA");

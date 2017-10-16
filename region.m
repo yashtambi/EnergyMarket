@@ -27,9 +27,10 @@ classdef region < handle
                plant_name = string(csv.PlantName(i));
                plant_type = string(csv.PlantType(i));
                plant_capacity = double(csv.Capacity(i));
+               year_active = double(csv.YearActive(i));
                    
                % Get plant efficiency, loan amount and onm from the prediction model 
-               [eff,loan,onm] = pm.var_predict(plant_type, double(csv.YearActive));
+               [eff,loan,onm] = pm.var_predict(plant_type, year_active);
                
                % If efficiency data is already present in database
                if ~isnan(double(csv.Efficiency(i)))
@@ -37,7 +38,7 @@ classdef region < handle
                end
                
                % Add the plant to the respective team
-               team_name.add_plant(plant_name, plant_type, plant_capacity, eff, loan, onm, true);
+               team_name.add_plant(plant_name, plant_type, plant_capacity, eff, loan, onm, true, year_active);
            end
            all_teams = unique(csv.Team);
            

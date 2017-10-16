@@ -19,6 +19,7 @@ classdef plant < handle
         plant_name
         plant_type
         availability
+        year_active
     end
 end
         
