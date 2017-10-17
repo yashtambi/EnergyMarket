@@ -8,7 +8,7 @@ pm1 = price_predict;
 
 % Initialize and update fuel prices
 r8 = fuel;
-r8.fuel_update(74.91,0.29,1041.66,9,10,17);
+r8.fuel_update(68.6, 0.21, 1060.12, 37, 12, 18);
 
 % Initialize teams
 ERLYJ = team;
