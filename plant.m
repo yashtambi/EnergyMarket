@@ -1,4 +1,5 @@
 classdef plant < handle
+    % Stores properties of a power plant
     properties (GetAccess=public)
         capacity
         av_capacity

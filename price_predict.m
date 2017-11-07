@@ -1,4 +1,12 @@
 classdef price_predict
+    % This class stores the properties of the curve fit models used to
+    % predict the loan amount, Operational and Maintenance (OnM) costs and
+    % efficiency of the plant.
+    % Reliability needs to be added to models.
+    % The name of the class is sort of a misnomer since it calculates more.
+    %
+    % This class is not a handle
+    
     properties
         
     end
@@ -14,9 +22,15 @@ classdef price_predict
     
     methods
         function [eff,loan,onm] = var_predict(obj, plant_type, year_active, current_year)
-            eff = 40;
-            loan = 1;
-            onm = 1;
+            % This function gives the plant efficiency, loan and Onm costs of the
+            % plant with respect to the current year.
+            % [efficiency, loan, onm] = var_predict(plant_type, year_active)
+            % [efficiency, loan, onm] = var_predict(plant_type, year_active, current_year)
+            %   if current year is not provided, it is taken as 12
+            %   (default)
+            % 
+            % plant_type: should be either of (in ""): powderCoal, nuclear,
+            % wind, naturalgasCCGT, naturalgasOCGT
             
             if (nargin<=3)
                 current_year = 12;

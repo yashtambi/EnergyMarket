@@ -1,4 +1,5 @@
 classdef team < handle
+    % Handle class for team
     properties(Constant, Access=private)
         plant_types = ["powderCoal", "naturalgasCCGT", "naturalgasOCGT", "nuclear", "wind"];
     end
@@ -13,11 +14,24 @@ classdef team < handle
     
     methods
         function set_name (obj, name)
+            % Function to set name of the team
+            % set_name("name")
             obj.name = name;
         end
         
         function add_plant(obj, name, type, capacity, efficiency, loan, onm, availability, year_active)
-            
+            % Add a new plant to the team
+            % add_plant(name, type, capacity, efficiency, loan, onm,
+            % availability, year_active)
+            %
+            % name          : name of the plant (in double quotes)
+            % type          : (in double quotes) one of: nuclear, wind, powderCoal, naturalgasCCGT, naturalgasOCGT
+            % capacity      : plant capacity (in MW)
+            % loan          : loan amount per year (in Millions)
+            % onm           : Operation and Maintenance costs per year (in Millions)
+            % availability  : Plant availability in current round (true if available, false if under maintenance)
+            % year active   : Year of plant commissioning 
+             
             %Validate PowerPlant type
             isValid = any(strcmp(type, obj.plant_types)==1);
             if isValid == false
@@ -69,6 +83,11 @@ classdef team < handle
         end
         
         function dismantle_plant(obj, name)
+            % Function to dismantle plant and remove from the corresponding
+            % team and region portfolio
+            % dismantle_plant(plant_name)
+            % plant_name: name of the plant (in double quotes)
+            
             for i = 1:length(obj.plants)
                 if(strcmp(name, obj.plants(i).plant_name)==1)
                     obj.total_capacity = obj.total_capacity - obj.plants(i).capacity;
@@ -83,6 +102,12 @@ classdef team < handle
         end
         
         function get_costs(obj,fuel,toprint)
+            % Function to get all the costs (variable, carbon) of the team,
+            % and store them in the internal variables
+            %
+            % get_costs(obj,fuel,toprint)
+            % fuel      : fuel cost structure
+            % toprint   : (optional) true if print required, false if not required. Defaults to true
             
             % Add two more feilds: co2 emissions and units of fuel consumed
             flag = true;
@@ -147,6 +172,12 @@ classdef team < handle
         end
         
         function [tot,av] = get_capacity(obj, fuels)
+            % Function to print available capacity, specially useful when
+            % having a large number of wind farms
+            %
+            % get_capacity(obj, fuels)
+            % fuels: fuel structure
+            
             av = 0;
             tot = 0;
             for i = 1:length(obj.plants)
@@ -161,6 +192,12 @@ classdef team < handle
         end
         
         function update_plant(obj, name, feild, value)
+            % Function to update plant attributes
+            % 
+            % update_plant(obj, plant_name, attribute, new_value)
+            % plant_name : name of the plant (in double quotes)
+            % attribute  : either of (in double quotes) availability, capacity, loan, onm, efficiency 
+            
             for i = 1:length(obj.plants)
                 if obj.plants(i).plant_name == name
                     switch feild
@@ -192,6 +229,7 @@ classdef team < handle
         end
         
         function reset_team(obj)
+            % Resets the team, clears the portfolio
             obj.plants = [];
             obj.num_plants = [];
             obj.total_capacity = [];

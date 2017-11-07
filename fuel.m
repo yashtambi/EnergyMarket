@@ -21,6 +21,13 @@ classdef fuel < handle
     end
     methods
         function fuel_update(obj,coal,gas,uranium,wind,co2,current_round)
+            % This program updates the prices 
+            % Arguments
+            % obj.fuel_update(coal, gas, uranium, wind)
+            % obj.fuel_update(coal, gas, uranium, wind, co2)
+            % obj.fuel_update(coal, gas, uranium, wind, co2, current round)
+            % returns: none
+            
             obj.coal_price = coal;
             obj.gas_price = gas;
             obj.uranium_price = uranium;
